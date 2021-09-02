@@ -8,9 +8,9 @@ def update():
     with open('version.txt', encoding='utf-8') as f:
         version, name = f.read().split(':')
 
-    all_versions = requests.get('https://...').text
-    #new_version = options.split('\n')[0]
-    new_version = '1.0.1'
+    all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions').text
+    new_version = all_versions.split('\n')[0]
+    #new_version = '1.0.1'
 
     if version != new_version:
         for data in all_versions.split('\n')[1::]:
@@ -31,7 +31,7 @@ with open('version.txt', encoding='utf-8') as f:
     version, name = f.read().split(':')
 
 
-#update()
+update()
 os.startfile(name)
 while True:
     time.sleep(60 * 60)   # 1 час
@@ -43,7 +43,7 @@ while True:
     for program in psutil.process_iter():
         if name == program.name():
             program.terminate()
-    #update()
+    update()
     os.startfile(name)
 
 
