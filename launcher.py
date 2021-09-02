@@ -5,8 +5,12 @@ import requests, os
 
 def update():
     global version
-    with open('version.txt', encoding='utf-8') as f:
-        version, name = f.read().split(':')
+    try:
+        with open('version.txt', encoding='utf-8') as f:
+            version, name = f.read().split(':')
+    except Exception:
+        version = '0'
+        name = 'blocker.exe'
 
     all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions').text
     new_version = all_versions.split('\n')[0]
@@ -27,11 +31,19 @@ def update():
     elif version == new_version:
         print('Уже установлена последняя версия')
 
-with open('version.txt', encoding='utf-8') as f:
-    version, name = f.read().split(':')
+
+try:
+    with open('version.txt', encoding='utf-8') as f:
+        version, name = f.read().split(':')
+except Exception:
+    version = '0'
+    name = 'blocker.exe'
 
 
 update()
+for program in psutil.process_iter():
+    if name == program.name():
+        program.terminate()
 os.startfile(name)
 while True:
     time.sleep(60 * 60)   # 1 час
@@ -45,7 +57,3 @@ while True:
             program.terminate()
     update()
     os.startfile(name)
-
-
-
-
