@@ -10,7 +10,7 @@ def update():
 
     all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions').text
     new_version = all_versions.split('\n')[0]
-    #new_version = '1.0.1'
+    #new_version = '1.0.0'
 
     if version != new_version:
         for data in all_versions.split('\n')[1::]:

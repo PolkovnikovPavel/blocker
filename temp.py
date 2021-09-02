@@ -1,7 +1,6 @@
-import win32ui, win32gui, time, requests, os
+import time
 from pywinauto import Desktop
 import telebot
-from telebot import types
 import threading
 
 
