@@ -9,17 +9,17 @@ class Bot(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        for i in range(10):
+        for i in range(58):
             try:
                 start_polling()
             except Exception:
                 print('Ошибка подключения')
-                time.sleep(5)
+                time.sleep(60)
 
 
-bot = telebot.TeleBot('1772570477:AAHD_RuVGv6yEw6SecPIor91ULdSL2YBDOc')
+bot = telebot.TeleBot('1986341221:AAEFvlugCI3dkM_yGPEtL613zaJ68-01htw')
 is_checking = True
-path_data = 'C:/Users/python/programs/blocker/data'
+path_data = 'data'
 
 
 windows = Desktop(backend="uia").windows()

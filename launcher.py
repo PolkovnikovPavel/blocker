@@ -12,7 +12,7 @@ def update():
         version = '0'
         name = 'blocker.exe'
 
-    all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions').text
+    all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions/all_versions').text
     new_version = all_versions.split('\n')[0]
     #new_version = '1.0.0'
 
@@ -40,10 +40,12 @@ except Exception:
     name = 'blocker.exe'
 
 
+print('обновление...')
 update()
 for program in psutil.process_iter():
     if name == program.name():
         program.terminate()
+        print('закрыта старая программа')
 os.startfile(name)
 while True:
     time.sleep(60 * 60)   # 1 час
@@ -55,5 +57,6 @@ while True:
     for program in psutil.process_iter():
         if name == program.name():
             program.terminate()
+    print('обновление...')
     update()
     os.startfile(name)
