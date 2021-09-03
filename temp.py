@@ -9,12 +9,15 @@ class Bot(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        for i in range(58):
+        my_timer = time.time()
+        while True:
             try:
                 start_polling()
             except Exception:
                 print('Ошибка подключения')
-                time.sleep(60)
+                time.sleep(5)
+            if time.time() - my_timer > 3570:
+                break
 
 
 bot = telebot.TeleBot('1986341221:AAEFvlugCI3dkM_yGPEtL613zaJ68-01htw')
@@ -70,6 +73,54 @@ def echo_all(message):
             f.write(new_text)
         is_checking = True
         text = 'В ближайшее время начнётся проверка'
+    elif message.text.lower() == 'версия':
+        try:
+            with open('version.txt', encoding='utf8') as f:
+                text = f.read()
+                text = f'Версия: {text.split(":")[0]}'
+        except Exception:
+            text = 'По каким то причинам не получилось узнать версию'
+    elif message.text.lower() == 'чс':
+        with open(path_data, encoding='utf8') as f:
+            ls = f.read().split('\n')[1::]
+            text = '* чёрный список *\n\n' + '\n'.join(list(map(lambda x: f'{x}) {ls[x]}', range(len(ls)))))
+    elif 'удалить ' in message.text.lower():
+        try:
+            num = int(message.text.lower().split('удалить ')[-1])
+            with open(path_data, encoding='utf8') as f:
+                ls = f.read().split('\n')[1::]
+            del ls[num]
+            if len(ls) > 0:
+                new_text = f'{mode}\n' + '\n'.join(ls)
+                with open(path_data, encoding='utf8', mode='w') as f:
+                    f.write(new_text)
+                is_checking = True
+                text = 'В ближайшее время чёрный список будет обновлён'
+            else:
+                text = 'Нельзя полностью чистить чёрный список'
+        except Exception:
+            text = 'Введены некоректно данные'
+    elif 'добавить ' in message.text.lower():
+        name = message.text.split('обавить ')[-1]
+        with open(path_data, encoding='utf8') as f:
+            ls = f.read().split('\n')[1::]
+        ls.append(name)
+        new_text = f'{mode}\n' + '\n'.join(ls)
+        with open(path_data, encoding='utf8', mode='w') as f:
+            f.write(new_text)
+        is_checking = True
+        text = 'В ближайшее время чёрный список будет обновлён'
+    elif message.text.lower() == 'показать приложения':
+        rez = []
+        for w in Desktop(backend="uia").windows():
+            if w.window_text() != '':
+                rez.append(w.window_text())
+        text = '* Открытые окна *\n' + '\n\n'.join(rez)
+    elif message.text.lower() == 'состояние':
+        text = mode
+
+
+
 
     bot.send_message(message.chat.id, text)
 
@@ -83,9 +134,10 @@ bot_puling.start()
 mode = 0
 black_list = []
 log = ['* Это начало логов *']
+bot.send_message(668018945, 'Запуск блокера')
 
 while True:
-    time.sleep(2)
+    time.sleep(5)
     if is_checking:
         with open(path_data, encoding='utf8') as f:
             text = f.read()
