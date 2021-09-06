@@ -1,1 +1,1 @@
-1.0.1:blocker.exe
+1.1.0:blocker.exe

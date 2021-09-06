@@ -12,9 +12,11 @@ def update():
         version = '0'
         name = 'blocker.exe'
 
-    all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions/all_versions').text
+    try:
+        all_versions = requests.get('https://raw.githubusercontent.com/PolkovnikovPavel/blocker/master/all_versions/all_versions').text
+    except Exception:
+        return False
     new_version = all_versions.split('\n')[0]
-    #new_version = '1.0.0'
 
     if version != new_version:
         for data in all_versions.split('\n')[1::]:

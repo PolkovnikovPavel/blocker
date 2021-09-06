@@ -1,4 +1,4 @@
-import time
+import time, psutil
 from pywinauto import Desktop
 import telebot
 import threading
@@ -27,6 +27,19 @@ path_data = 'data'
 
 windows = Desktop(backend="uia").windows()
 print([w.window_text() for w in windows])
+
+
+def close_other_launchers():
+    process_iter = list(psutil.process_iter())
+    launcher_p = []
+    for process in process_iter:
+        if 'launcher' in process.name():
+            launcher_p.append(process)
+    if len(launcher_p) > 2:
+        need_time = max(map(lambda x: x.create_time(), launcher_p))
+        for process in launcher_p:
+            if process.create_time() != need_time:
+                process.terminate()
 
 
 def check_black_list(black_list):
@@ -116,6 +129,13 @@ def echo_all(message):
             if w.window_text() != '':
                 rez.append(w.window_text())
         text = '* Открытые окна *\n' + '\n\n'.join(rez)
+    elif message.text.lower() == 'показать процессы':
+        process_iter = list(psutil.process_iter())
+        process_iter.sort(key=lambda x: x.name())
+        rez = list(map(lambda x: x.name(), process_iter))
+        text = '* Процессы *\n' + '\n\n'.join(rez)
+
+
     elif message.text.lower() == 'состояние':
         text = mode
 
@@ -134,6 +154,7 @@ bot_puling.start()
 mode = 0
 black_list = []
 log = ['* Это начало логов *']
+close_other_launchers()
 bot.send_message(668018945, 'Запуск блокера')
 
 while True:
