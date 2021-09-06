@@ -33,7 +33,7 @@ def close_other_launchers():
     process_iter = list(psutil.process_iter())
     launcher_p = []
     for process in process_iter:
-        if 'launcher' in process.name():
+        if process.name() == 'launcher.exe':
             launcher_p.append(process)
     if len(launcher_p) > 2:
         need_time = max(map(lambda x: x.create_time(), launcher_p))
