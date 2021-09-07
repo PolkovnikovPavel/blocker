@@ -2,6 +2,7 @@ import time, psutil
 from pywinauto import Desktop
 import telebot
 import threading
+from PIL import Image, ImageDraw, ImageFont
 
 
 class Bot(threading.Thread):
@@ -40,6 +41,21 @@ def close_other_launchers():
         for process in launcher_p:
             if process.create_time() != need_time:
                 process.terminate()
+
+
+def show_text_on_screen(text):
+    lines = []
+    text = text
+    while len(text) > 70:
+        lines.append(text[:71])
+        text = text[71::]
+    lines.append(text)
+    text = '\n'.join(lines)
+    im = Image.new('RGB', (1920, 1080), color=('#FFFFFF'))
+    font = ImageFont.truetype("arial.ttf", size=50)
+    draw_text = ImageDraw.Draw(im)
+    draw_text.text((100, 100), text, fill=('#000000'), font=font)
+    im.show()
 
 
 def check_black_list(black_list):
@@ -135,11 +151,14 @@ def echo_all(message):
         rez = list(map(lambda x: x.name(), process_iter))
         text = '* Процессы *\n' + '\n\n'.join(rez)
 
+    elif 'написать на экране ' in message.text.lower():
+        text = message.text.split('аписать на экране ')[-1]
+        showing = threading.Thread(target=show_text_on_screen, args=(text,))
+        showing.start()
+        text = 'Ваш текст успешно был отображён на экране'
 
     elif message.text.lower() == 'состояние':
         text = mode
-
-
 
 
     bot.send_message(message.chat.id, text)
